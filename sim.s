@@ -10,11 +10,9 @@
 		EXPORT  SUM	[DATA,SIZE=4]	; export public varialbe "SUM" for use elsewhere
 		EXPORT  DIFF [DATA,SIZE=4]	; export public varialbe "DIFF" for use elsewhere
 		EXPORT  ABS [DATA,SIZE=4]	; export public varialbe "ABS" for use elsewhere
-		EXPORT LARGER [DATA,SIZE=4] ; export public variable "LARGER" for use elsewhere
 SUM     SPACE	4   				; allocates 4 uninitialized bytes in RAM for SUM
 DIFF	SPACE	4					; allocates 4 uninitialized bytes in RAM for DIFF
 ABS		SPACE	4					; allocates 4 uninitialized bytes in RAM for ABS
-LARGER	SPACE	4					; allocates 4 uninitialized bytes in RAM for LARGER
 
 		; Code
 		AREA    |.text|, CODE, READONLY, ALIGN=2	; code in flash ROM
@@ -42,26 +40,11 @@ STR_ABS								; label STR_ABS, store the absolute difference
 GET_ABS								; label GET_ABS, calculate the absolute difference if the difference is negative
 		RSB	R0, R0, #0				; R0=0-R0;
 		B	STR_ABS					; branch to STR_ABS to store the result
-		
-GET_LARGER
-		SUBS R0, R1, R2				; R0=R1-R2
-		BMI	STR_LARGER2				; check condition code, if N=1 (i.e. the difference is negative), sets Larger = NUM2, otherwise NUM1
-
-STR_LARGER1
-		LDR R3, =LARGER				; R3=&ABS, R3 points to LARGER
-		STR R1, [R3]				; stores NUM1 to LARGER
-		BX	LR						; subroutine return
-		
-STR_LARGER2
-		LDR R3, =LARGER				; R3=&ABS, R3 points to LARGER
-		STR R2, [R3]				; stores NUM2 to LARGER
-		BX	LR						; subroutine return
 
 Start	LDR R1, NUM1				; R1=NUM1
 		LDR R2,	NUM2				; R2=NUM2
 		BL	GET_SUM
 		BL	GET_DIFF
-		BL  GET_LARGER
 
 		ALIGN                       ; make sure the end of this section is aligned
 		END                         ; end of file
